@@ -1,0 +1,13 @@
+﻿schedule brightness 80 belowAverage
+schedule contrast -60 aboveAverage
+schedule contrast aboveAverage
+schedule contrast 
+schedule brightness 110 Normal
+schedule brightness -70
+schedule contrast 5 aboveAverage
+schedule brightness 65
+schedule contrast 51 aboveAverage
+schedule brightness -10 Normal
+schedule brightness -120
+schedule contrast 20 belowAverage
+schedule brightness 40 aboveAverage

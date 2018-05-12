@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PV178.Homeworks.HW06", "PV178.Homeworks.HW06\PV178.Homeworks.HW06.csproj", "{7430FDB5-13E4-4317-BE2C-CEF6357CEF9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PV178.Homeworks.HW06.Tests", "PV178.Homeworks.HW06.Tests\PV178.Homeworks.HW06.Tests.csproj", "{FC68EAC4-59C1-462E-B94D-9407A3820B38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7430FDB5-13E4-4317-BE2C-CEF6357CEF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7430FDB5-13E4-4317-BE2C-CEF6357CEF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7430FDB5-13E4-4317-BE2C-CEF6357CEF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7430FDB5-13E4-4317-BE2C-CEF6357CEF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC68EAC4-59C1-462E-B94D-9407A3820B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC68EAC4-59C1-462E-B94D-9407A3820B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC68EAC4-59C1-462E-B94D-9407A3820B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC68EAC4-59C1-462E-B94D-9407A3820B38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
