@@ -1,7 +1,12 @@
 ﻿using System;
+using PV178.Homeworks.HW06.Content;
 using PV178.Homeworks.HW06.Enums;
 using PV178.Homeworks.HW06.Jobs;
 using PV178.Homeworks.HW06.Utils.Output;
+using PV178.Homeworks.HW06.Utils.Jobs;
+using PV178.Homeworks.HW06.Infrastructure;
+using System.IO;
+using System.Collections.Generic;
 
 namespace PV178.Homeworks.HW06.Utils.Input
 {
@@ -139,8 +144,7 @@ namespace PV178.Homeworks.HW06.Utils.Input
         /// </summary>
         private static void ProcessCancelCommand()
         {
-            // TODO...
-
+            //Vyvolejte statickou metodu "ImportantPrivateStaticVoidMethod" tridy Customer
             throw new NotImplementedException();
         }
 
@@ -150,9 +154,53 @@ namespace PV178.Homeworks.HW06.Utils.Input
         /// </summary>
         public static void ProcessBatchScheduleCommand(string lowerCaseInput)
         {
-            // TODO...
+            string[] commandLine = lowerCaseInput.Split();
+            int length = commandLine.Length;
 
-            throw new NotImplementedException();
+            //try
+            //{
+                if (CheckInputData(commandLine, length))
+                {
+                    using (StreamReader file = new StreamReader(Paths.BatchProcessJob(commandLine[1])))
+                    {
+                        List<BaseJob> jobList = new List<BaseJob>();
+                        string line;
+
+                        while ((line = file.ReadLine()) != null)
+                        {                   
+                            BaseJob job = ProcessScheduleCommand(line, false);
+
+                            // what happens, if one of the items is not correct?
+                            if (job != null)
+                            {
+                                jobList.Add(job);
+                            }
+                        }
+                        JobScheduler.ScheduleJobs(jobList.ToArray());
+                    }
+                }
+            //}
+            //catch (Exception)   // better exception handler
+            //{
+                //Console.WriteLine("File not found.");
+            //}
+        }
+
+        private static bool CheckInputData(string[] commandLine, int length)
+        {
+            if (length != 2)
+            {
+                Console.WriteLine("Not correct command.");
+                return false;
+            }
+
+            if (!commandLine[0].ToLower().Contains(BatchScheduleJobCommand))
+            {
+                Console.WriteLine($"Command {BatchScheduleJobCommand} not present.");
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -164,9 +212,58 @@ namespace PV178.Homeworks.HW06.Utils.Input
         /// <returns>Parsed job from user input</returns>
         public static BaseJob ProcessScheduleCommand(string input, bool scheduleJob = true)
         {
-            // TODO...
+            BaseJob processedJob = null;
+            string[] line = input.Trim().Split();      // command line
+            int length = line.Length;
 
-            throw new NotImplementedException();
+            if (!line[0].ToLower().Contains(ScheduleJobCommand))
+            {
+                Console.WriteLine($"Command {ScheduleJobCommand} not present.");
+                return null;
+            }
+
+            JobType jobType;
+            if (!Enum.TryParse(line[1], true, out jobType))
+            {
+                Console.WriteLine("Bad jobtype.");
+                return null;
+            }
+            
+            processedJob = InstanceJob(jobType, line, length);
+            if (scheduleJob)
+            {
+                JobScheduler.ScheduleJobs(new BaseJob[] { processedJob });
+            }
+
+            return processedJob;
+        }
+
+        private static string ConcatArguments(string[] arguments, int length)
+        {
+            string result = "";
+
+            for (int i = 2; i < length; i++)
+            {
+                result += arguments[i];
+            }
+
+            return result;
+        }
+
+        private static BaseJob InstanceJob(JobType jobType, string[] line, int length)
+        {
+            if (length > 2)
+            {
+                string last = line[length - 1];
+                JobPriority jobPriority = JobPriority.Normal;
+                if (!Int32.TryParse(last, out int digit) && Enum.TryParse(last, true, out jobPriority))     // bad behavior, reflection?
+                {
+                    length -= 1;
+                }
+                string arguments = ConcatArguments(line, length);
+                return JobResolver.Resolve(jobType, jobPriority, arguments);
+            }
+            return JobResolver.Resolve(jobType);
         }
     }
 }

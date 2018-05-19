@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using PV178.Homeworks.HW06.Enums;
 using PV178.Homeworks.HW06.Jobs;
 using PV178.Homeworks.HW06.Utils.Output;
@@ -23,8 +24,7 @@ namespace PV178.Homeworks.HW06.Infrastructure
 
         static JobScheduler()
         {
-            // TODO initialize Executor
-
+            Executor = new Executor();
             Executor.JobDone += Executor_JobDone;
             AppDomain.CurrentDomain.ProcessExit += ProcessExit;
         }
@@ -52,7 +52,7 @@ namespace PV178.Homeworks.HW06.Infrastructure
             Debug.WriteLine(log + executionTime + Environment.NewLine);
             LogHelper.WriteLog(log);
 
-            // TODO perform some operation/s here          
+            // TODO perform some operation/s here
         }
 
         /// <summary>
@@ -65,12 +65,19 @@ namespace PV178.Homeworks.HW06.Infrastructure
             {
                 var log = $"Scheduling {job?.GetType()?.Name?.Replace("Job", string.Empty)} job (ID: {job.Id}) with {job.Priority} priority.";
                 Debug.WriteLine(log);
-                LogHelper.WriteLog(log);
+                LogHelper.WriteLog(log);    // some problem here
 
                 PriorityQueue.Enqueue(job);
             }
-
+            
             // TODO perform some operation/s here
+            while (!AllJobsHaveFinished())
+            {
+                if (Executor.CanStartNewJob())
+                { 
+                    Executor.ExecuteJob(PriorityQueue.Dequeue());
+                }
+            }
         }
 
         /// <summary>
@@ -78,9 +85,7 @@ namespace PV178.Homeworks.HW06.Infrastructure
         /// </summary>
         public static void CancelCurrentJob()
         {
-            // TODO
-
-            throw new NotImplementedException();
+            Executor.CancelCurrentJob();
         }
 
         /// <summary>
@@ -89,9 +94,8 @@ namespace PV178.Homeworks.HW06.Infrastructure
         /// <returns>True if all scheduled jobs have finished, otherwise false</returns>
         public static bool AllJobsHaveFinished()
         {
-            // TODO
-
-            throw new NotImplementedException();
+            int result = PriorityQueue.GetScheduledJobsCount();
+            return PriorityQueue.GetScheduledJobsCount() == 0 ? true : false;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PV178.Homeworks.HW06.Jobs.PasswordGuessing
 {
@@ -98,10 +99,34 @@ namespace PV178.Homeworks.HW06.Jobs.PasswordGuessing
         protected override void DoWork(IProgress<string> progress, CancellationToken cancellationToken)
         {
             // TODO...
-
+            if (cancellationToken.CanBeCanceled)
+            {
+                
+            }
             throw new NotImplementedException();
         }
 
+        private Task TryNumbers(CancellationToken cancellationToken)
+        {
+            return Task.Run(() => { Dive("", 0); });
+        }
 
+        private void Dive(string prefix, int level)
+        {
+            level += 1;
+            foreach (char c in Numbers)
+            {
+                //Console.WriteLine(prefix + c);
+                if ((prefix + c) == secretPassword)
+                {
+                    Console.WriteLine($"GOT IT: {prefix + c}");
+                    Console.ReadLine();
+                }
+                if (level < secretPassword.Length)
+                {
+                    Dive(prefix + c, level);
+                }
+            }
+        }
     }
 }

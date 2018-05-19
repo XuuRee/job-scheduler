@@ -18,9 +18,11 @@ namespace PV178.Homeworks.HW06.Utils.Jobs
         /// <returns>Created (and initialized) job instance</returns>
         public static BaseJob Resolve(JobType jobType, JobPriority priority = JobPriority.Normal, string customArguments = "")
         {
-            // TODO...
-
-            throw new NotImplementedException();
+            // jobType recognize jobtype here in resolve function.
+            JobBuilder builder = new JobBuilder(jobType);
+            builder.SetPriority(priority);
+            builder.SetJobArguments(customArguments);
+            return builder.GetResult();
         }
     }
 }

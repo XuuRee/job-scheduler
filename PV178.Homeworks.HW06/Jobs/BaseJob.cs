@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Remoting;
 using System.Threading;
 using PV178.Homeworks.HW06.Enums;
 
@@ -20,6 +21,11 @@ namespace PV178.Homeworks.HW06.Jobs
         /// Unique Identifier
         /// </summary>
         public long Id { get; }
+
+        public static explicit operator BaseJob(ObjectHandle v)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Current state of the baseJob
