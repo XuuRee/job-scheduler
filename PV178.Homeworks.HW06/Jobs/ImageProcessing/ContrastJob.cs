@@ -38,14 +38,12 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
 
             if (change.HasValue)
             {
-                ContrastChange = change.Value;
+                ContrastChange = AssignRightValue(change.Value);
             }
             if (path != null && File.Exists(path))
             {
                 ImagePath = path;
             }
-
-            ContrastChange = AssignRightValue(ContrastChange);
         }
 
         protected override void DoWork(IProgress<string> progress, CancellationToken cancellationToken)
@@ -67,9 +65,8 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Marshal.Copy(rgbValues, 0, bmpData.Scan0, bytes);
             bmp.UnlockBits(bmpData);
             bmp.Save(Paths.GetOutputImageFullName(this.Id, "contrast"));
-
-            Console.WriteLine($"Changed contrast by {ContrastChange} point(s)");
-            SwitchToFinishedState("Done");
+            
+            SwitchToFinishedState($"Changed contrast by { ContrastChange} point(s)");
         }
 
         private void Parse(out int? change, out string path, string[] line)

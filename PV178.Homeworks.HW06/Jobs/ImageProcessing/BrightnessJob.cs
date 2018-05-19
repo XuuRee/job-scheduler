@@ -32,28 +32,18 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
         public override void InitJobArguments(string input)
         {
             string[] line = input.Trim().Split();
-            Tuple<int?, string> result = GetValues(line);
-            
-            if (result.Item1.HasValue)
+            string path = null; int? change = null;
+
+            Parse(out change, out path, line);
+
+            if (change.HasValue)
             {
-                BrightnessChange = result.Item1.Value;
+                BrightnessChange = AssignRightValue(change.Value);
             }
-            // path relativni nebo absolutni cesta
-            if (result.Item2 != null && File.Exists(result.Item2))
+            if (path != null && File.Exists(path))
             {
-                ImagePath = result.Item2;
-                /*
-                try
-                {
-                   ImagePath = Path.GetFullPath(result.Item2);
-                }
-                catch (Exception)
-                {
-                    ImagePath = Paths.Image01;
-                }
-                */
+                ImagePath = path;
             }
-            BrightnessChange = AssignRightValue(BrightnessChange);
         }
 
         protected override void DoWork(IProgress<string> progress, CancellationToken cancellationToken)
@@ -71,26 +61,27 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
 
             InitTupleLimits(limits, bytes, parts);
-
             for (int i = 0; i < limits.Length; i++)
             {
-                int j = i;                                                      // dont need to
+                int j = i;
                 int start = limits[j].Item1; int end = limits[j].Item2;
                 tasks.Add(Task.Run(() => {
                     for (int counter = start; counter < end; counter += 1)
                     {
-                        byte brightness = Convert.ToByte(BrightnessChange); // necesary
-                        if (rgbValues[counter] + brightness < 0)
+                        //int b = (int)rgbValues[counter];
+                        //int brightness = (byte) BrightnessChange;          // necesary
+                        if (rgbValues[counter] + BrightnessChange < 0)
                         {
                             rgbValues[counter] = 0;
                         }
-                        else if (rgbValues[counter] + brightness > 256)
+                        else if (rgbValues[counter] + BrightnessChange > 255)
                         {
-                            rgbValues[counter] = 255;       // not 256?
+                            rgbValues[counter] = 255;
                         }
                         else
                         {
-                            rgbValues[counter] += brightness;
+                            int brightness = rgbValues[counter] + BrightnessChange;
+                            rgbValues[counter] += Convert.ToByte(brightness);
                         }
                     }
                 }));
@@ -99,10 +90,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
 
             Marshal.Copy(rgbValues, 0, bmpData.Scan0, bytes);
             bmp.UnlockBits(bmpData);
-            bmp.Save(Paths.GetOutputImageFullName(this.Id, "brightness"));   // not to string 
-
-            Console.WriteLine($"Changed brightness by {BrightnessChange} point(s)");
-            SwitchToFinishedState("Done");
+            bmp.Save(Paths.GetOutputImageFullName(this.Id, "brightness"));
+            
+            SwitchToFinishedState($"Changed brightness by { BrightnessChange} point(s)");
         }
 
         private void InitTupleLimits(Tuple<int, int>[] limits, int bytes, int parts)
@@ -122,14 +112,6 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
                     end = bytes - 1;
                 }
             }
-        }
-
-        private Tuple<int?, string> GetValues(string[] line)
-        {
-            // dont need this function at all
-            int? change; string path;
-            Parse(out change, out path, line);
-            return new Tuple<int?, string>(change, path);
         }
 
         private void Parse(out int? change, out string path, string[] line)
