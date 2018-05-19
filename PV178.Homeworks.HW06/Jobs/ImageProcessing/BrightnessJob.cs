@@ -60,29 +60,17 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
 
+            progress.Report($"Starting job with id {this.Id}... 0 %");
             InitTupleLimits(limits, bytes, parts);
             for (int i = 0; i < limits.Length; i++)
             {
-                int j = i;
+                int j = i;      // dont need
                 int start = limits[j].Item1; int end = limits[j].Item2;
                 tasks.Add(Task.Run(() => {
                     for (int counter = start; counter < end; counter += 1)
                     {
-                        //int b = (int)rgbValues[counter];
-                        //int brightness = (byte) BrightnessChange;          // necesary
-                        if (rgbValues[counter] + BrightnessChange < 0)
-                        {
-                            rgbValues[counter] = 0;
-                        }
-                        else if (rgbValues[counter] + BrightnessChange > 255)
-                        {
-                            rgbValues[counter] = 255;
-                        }
-                        else
-                        {
-                            int brightness = rgbValues[counter] + BrightnessChange;
-                            rgbValues[counter] += Convert.ToByte(brightness);
-                        }
+                        int brightness = rgbValues[counter] + BrightnessChange;
+                        rgbValues[counter] = Helpers.ConvertToByte(brightness);
                     }
                 }));
             }
@@ -91,8 +79,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Marshal.Copy(rgbValues, 0, bmpData.Scan0, bytes);
             bmp.UnlockBits(bmpData);
             bmp.Save(Paths.GetOutputImageFullName(this.Id, "brightness"));
-            
-            SwitchToFinishedState($"Changed brightness by { BrightnessChange} point(s)");
+
+            progress.Report($"Ending job with id {this.Id}... 100 %");
+            SwitchToFinishedState($"Changed brightness by {BrightnessChange} point(s)");
         }
 
         private void InitTupleLimits(Tuple<int, int>[] limits, int bytes, int parts)

@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using PV178.Homeworks.HW06.Content;
 using PV178.Homeworks.HW06.Utils.Input;
 using PV178.Homeworks.HW06.Utils.Output;
 
@@ -25,11 +30,8 @@ namespace PV178.Homeworks.HW06
         static void Main(string[] args)
         {
             /*
-            Task characters = TryCharacters();
-            Console.ReadLine();
-
-            Task numbers = TryNumbers();
-            Console.ReadLine();
+            TryCharacters();
+            TryNumbers();
             */
             LogHelper.OpenLogWriter();
 
@@ -44,36 +46,18 @@ namespace PV178.Homeworks.HW06
 
         private static Task TryCharacters()
         {
-            return Task.Run(() => { DiveChar("", 0); });
+            return Task.Run(() => { Dive(LowerCaseLetters, "", 0); });
         }
-
-        private static void DiveChar(string prefix, int level)
-        {
-            level += 1;
-            foreach (char c in LowerCaseLetters)
-            {
-                Console.WriteLine(prefix + c);
-                if ((prefix + c) == secretPassword)
-                {
-                    Console.WriteLine($"GOT IT: {prefix + c}");
-                    Console.ReadLine();
-                }
-                if (level < secretPassword.Length)
-                {
-                    DiveChar(prefix + c, level);
-                }
-            }
-        }
-
+        
         private static Task TryNumbers()
         {
-            return Task.Run(() => { Dive("", 0); });
+            return Task.Run(() => { Dive(Numbers, "", 0); });
         }
 
-        private static void Dive(string prefix, int level)
+        private static void Dive(char[] allowed, string prefix, int level)
         {
             level += 1;
-            foreach (char c in Numbers)
+            foreach (char c in allowed)
             {
                 Console.WriteLine(prefix + c);
                 if ((prefix + c) == secretPassword)
@@ -83,7 +67,7 @@ namespace PV178.Homeworks.HW06
                 }
                 if (level < secretPassword.Length)
                 {
-                    Dive(prefix + c, level);
+                    Dive(allowed, prefix + c, level);
                 }
             }
         }

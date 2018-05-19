@@ -244,7 +244,7 @@ namespace PV178.Homeworks.HW06.Utils.Input
 
             for (int i = 2; i < length; i++)
             {
-                result += arguments[i];
+                result += " " + arguments[i];
             }
 
             return result;

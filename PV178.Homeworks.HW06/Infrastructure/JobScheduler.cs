@@ -65,8 +65,7 @@ namespace PV178.Homeworks.HW06.Infrastructure
             {
                 var log = $"Scheduling {job?.GetType()?.Name?.Replace("Job", string.Empty)} job (ID: {job.Id}) with {job.Priority} priority.";
                 Debug.WriteLine(log);
-                LogHelper.WriteLog(log);    // some problem here
-
+                LogHelper.WriteLog(log);
                 PriorityQueue.Enqueue(job);
             }
             

@@ -53,11 +53,14 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
             int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
+            int parts = bytes / 4;
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
             
             double change = Math.Pow(((100 + ContrastChange) / 100.0), 2);
+            progress.Report($"Starting job with id {this.Id}... 0 %");
             Parallel.For(0, rgbValues.Length, index => {
+                ShowProgress(progress, index, parts);
                 int contrast = Convert.ToInt32(((rgbValues[index] / 255.0 - 0.5) * change + 0.5) * 255);
                 rgbValues[index] = ConvertToByte(contrast);
             });
@@ -65,8 +68,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Marshal.Copy(rgbValues, 0, bmpData.Scan0, bytes);
             bmp.UnlockBits(bmpData);
             bmp.Save(Paths.GetOutputImageFullName(this.Id, "contrast"));
-            
-            SwitchToFinishedState($"Changed contrast by { ContrastChange} point(s)");
+
+            progress.Report($"Ending job with id {this.Id}... 100 %");
+            SwitchToFinishedState($"Changed contrast by {ContrastChange} point(s)");
         }
 
         private void Parse(out int? change, out string path, string[] line)
@@ -110,6 +114,22 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
                 return MinContrast;
             }
             return change;
+        }
+
+        private void ShowProgress(IProgress<string> progress, int index, int part)
+        {
+            if (index == part)
+            {
+                progress.Report("Job is in process...\t 25 %");
+            }
+            if (index == 2 * part)
+            {
+                progress.Report("Job is in process...\t 50 %");
+            }
+            if (index == 3 * part)
+            {
+                progress.Report("Job is in process...\t 75 %");
+            }
         }
     }
 }
