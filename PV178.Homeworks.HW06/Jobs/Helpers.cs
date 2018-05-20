@@ -8,32 +8,35 @@ namespace PV178.Homeworks.HW06.Jobs
 {
     public static class Helpers
     {
-        public static byte ConvertToByte(int contrast)
+        public static byte ConvertToByte(int subpixel)
         {
-            if (contrast > 255)
+            if (subpixel > 255)
             {
                 return 255;
             }
-            if (contrast < 0)
+            if (subpixel < 0)
             {
                 return 0;
             }
-            return Convert.ToByte(contrast);
+            return Convert.ToByte(subpixel);
         }
 
-        public static void ShowProgress(IProgress<string> progress, int index, int part)
+        //public static void Parse(string[] line, out int? change, out string path)
+
+        public static void Parse(string[] line, ref int? change, ref string path)
         {
-            if (index == part)  // float, double?
+            int result;
+            //path = null; change = null;
+            foreach (var item in line)
             {
-                progress.Report("Job is in process...\t 25 %");
-            }
-            if (index == 2 * part)
-            {
-                progress.Report("Job is in process...\t 50 %");
-            }
-            if (index == 3 * part)
-            {
-                progress.Report("Job is in process...\t 75 %");
+                if (int.TryParse(item, out result))
+                {
+                    change = result;
+                }
+                else
+                {
+                    path = item;
+                }
             }
         }
     }

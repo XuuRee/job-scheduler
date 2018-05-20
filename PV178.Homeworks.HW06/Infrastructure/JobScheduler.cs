@@ -51,7 +51,7 @@ namespace PV178.Homeworks.HW06.Infrastructure
             var executionTime = $" in {job.ExecutionTime} ms.";
             Debug.WriteLine(log + executionTime + Environment.NewLine);
             LogHelper.WriteLog(log);
-
+            
             // TODO perform some operation/s here
         }
 
@@ -73,8 +73,9 @@ namespace PV178.Homeworks.HW06.Infrastructure
             while (!AllJobsHaveFinished())
             {
                 if (Executor.CanStartNewJob())
-                { 
-                    Executor.ExecuteJob(PriorityQueue.Dequeue());
+                {
+                    var job = PriorityQueue.Dequeue();
+                    Executor.ExecuteJob(job);
                 }
             }
         }
@@ -93,7 +94,6 @@ namespace PV178.Homeworks.HW06.Infrastructure
         /// <returns>True if all scheduled jobs have finished, otherwise false</returns>
         public static bool AllJobsHaveFinished()
         {
-            int result = PriorityQueue.GetScheduledJobsCount();
             return PriorityQueue.GetScheduledJobsCount() == 0 ? true : false;
         }
     }

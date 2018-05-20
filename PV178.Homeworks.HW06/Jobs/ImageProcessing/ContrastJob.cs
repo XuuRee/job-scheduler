@@ -32,13 +32,14 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
         public override void InitJobArguments(string input)
         {
             string[] line = input.Trim().Split();
-            string path = null; int? change = null;
 
-            Parse(out change, out path, line);
+            string path = null; int? change = null;
+            Helpers.Parse(line, ref change, ref path);
+            //Helpers.Parse(out change, out path, line);
 
             if (change.HasValue)
             {
-                ContrastChange = AssignRightValue(change.Value);
+                ContrastChange = AssignRightContrastValue(change.Value);
             }
             if (path != null && File.Exists(path))
             {
@@ -53,7 +54,7 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
             int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-            int parts = bytes / 4;
+            int parts = bytes / 5;
             byte[] rgbValues = new byte[bytes];
             Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
             
@@ -62,7 +63,7 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Parallel.For(0, rgbValues.Length, index => {
                 ShowProgress(progress, index, parts);
                 int contrast = Convert.ToInt32(((rgbValues[index] / 255.0 - 0.5) * change + 0.5) * 255);
-                rgbValues[index] = ConvertToByte(contrast);
+                rgbValues[index] = Helpers.ConvertToByte(contrast);
             });
 
             Marshal.Copy(rgbValues, 0, bmpData.Scan0, bytes);
@@ -73,6 +74,7 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             SwitchToFinishedState($"Changed contrast by {ContrastChange} point(s)");
         }
 
+        /*
         private void Parse(out int? change, out string path, string[] line)
         {
             int result;
@@ -89,21 +91,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
                 }
             }
         }
+        */
 
-        private byte ConvertToByte(int contrast)
-        {
-            if (contrast > 255)
-            {
-                return 255;
-            }
-            if (contrast < 0)
-            {
-                return 0;
-            }
-            return Convert.ToByte(contrast);
-        }
-
-        private int AssignRightValue(int change)
+        private int AssignRightContrastValue(int change)
         {
             if (change > MaxContrast)
             {
@@ -120,15 +110,19 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
         {
             if (index == part)
             {
-                progress.Report("Job is in process...\t 25 %");
+                progress.Report("Job is in process...\t 20 %");
             }
             if (index == 2 * part)
             {
-                progress.Report("Job is in process...\t 50 %");
+                progress.Report("Job is in process...\t 40 %");
             }
             if (index == 3 * part)
             {
-                progress.Report("Job is in process...\t 75 %");
+                progress.Report("Job is in process...\t 60 %");
+            }
+            if (index == 4 * part)
+            {
+                progress.Report("Job is in process...\t 80 %");
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -30,6 +31,10 @@ namespace PV178.Homeworks.HW06
         static void Main(string[] args)
         {
             /*
+            Console.WriteLine("Hello");
+            InfiniteLoop();
+            */
+            /*
             TryCharacters();
             TryNumbers();
             */
@@ -41,6 +46,24 @@ namespace PV178.Homeworks.HW06
             {
                 var input = Console.ReadLine();
                 CommandProcessor.AnalyzeInput(input);
+            }
+        }
+
+        public static void InfiniteLoop()
+        {
+            while (true)
+            {
+                Console.WriteLine("Type command: ");
+                Console.ReadLine();
+                Task.Run(() => { NumbersIterators(); });
+            }
+        }
+
+        public static void NumbersIterators()
+        {
+            for (int i = 0; i < 20500; i++)
+            {
+                Debug.WriteLine(i);
             }
         }
 

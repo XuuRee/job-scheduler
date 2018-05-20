@@ -32,13 +32,13 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
         public override void InitJobArguments(string input)
         {
             string[] line = input.Trim().Split();
-            string path = null; int? change = null;
 
-            Parse(out change, out path, line);
+            string path = null; int? change = null;
+            Helpers.Parse(line, ref change, ref path);      //Helpers.Parse(out change, out path, line);
 
             if (change.HasValue)
             {
-                BrightnessChange = AssignRightValue(change.Value);
+                BrightnessChange = AssignRightBrightnessValue(change.Value);
             }
             if (path != null && File.Exists(path))
             {
@@ -61,7 +61,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             Marshal.Copy(bmpData.Scan0, rgbValues, 0, bytes);
 
             progress.Report($"Starting job with id {this.Id}... 0 %");
+            int percent_progress = 20;
             InitTupleLimits(limits, bytes, parts);
+
             for (int i = 0; i < limits.Length; i++)
             {
                 int j = i;      // dont need
@@ -72,6 +74,9 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
                         int brightness = rgbValues[counter] + BrightnessChange;
                         rgbValues[counter] = Helpers.ConvertToByte(brightness);
                     }
+                }).ContinueWith(x => {
+                    progress.Report($"Job is in process...\t {percent_progress} %");
+                    percent_progress += 20;
                 }));
             }
             Task.WaitAll(tasks.ToArray());
@@ -103,6 +108,7 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
             }
         }
 
+        /*
         private void Parse(out int? change, out string path, string[] line)
         {
             int result;
@@ -119,8 +125,8 @@ namespace PV178.Homeworks.HW06.Jobs.ImageProcessing
                 }
             }
         }
-
-        private int AssignRightValue(int change)
+        */
+        private int AssignRightBrightnessValue(int change)
         {
             if (change > MaxBrightness)
             {

@@ -14,9 +14,12 @@ namespace PV178.Homeworks.HW06.Infrastructure
     public class Executor : IExecutor
     {
         public event EventHandler<BaseJob> JobDone;
-        
-        public BaseJob ProcessJob { get; set; }
+        public static bool IsExecutorFree { get; set; }
+
+        Action<String> print = (message) => Debug.WriteLine(message);
         public Stopwatch StopWatch { get; set; }
+
+        public BaseJob ProcessJob { get; set; }
 
         public Executor()
         {
@@ -35,16 +38,14 @@ namespace PV178.Homeworks.HW06.Infrastructure
         {
             return ProcessJob == null ? true : false;
         }
-
-        Action<String> print = (x) => Debug.WriteLine(x);
-
+        
         public Task ExecuteJob(BaseJob baseJob)                         //async
         {
             ProcessJob = baseJob;
             StopWatch.Start();
             Progress<string> progress = new Progress<string>(print);
-            Task task = Task.Run(() => {                                //await 
-                baseJob.Execute(progress, CancellationToken.None);
+            Task task = Task.Run(() => {                                //await
+                 baseJob.Execute(progress, CancellationToken.None);
             });
             task.Wait();
             StopWatch.Stop();
